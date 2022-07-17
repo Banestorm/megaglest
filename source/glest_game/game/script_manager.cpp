@@ -270,6 +270,8 @@ void ScriptManager::init(World* world, GameCamera *gameCamera, const XmlNode *ro
 	//luaScript.registerFunction(stopStreamingVideo, "stopStreamingVideo");
 	luaScript.registerFunction(stopAllVideo, "stopAllVideo");
 
+	luaScript.registerFunction(setFactionTeam, "setFactionTeam");
+	luaScript.registerFunction(getFactionTeam, "getFactionTeam");
 	luaScript.registerFunction(giveResource, "giveResource");
 	luaScript.registerFunction(givePositionCommand, "givePositionCommand");
 	luaScript.registerFunction(giveProductionCommand, "giveProductionCommand");
@@ -1140,6 +1142,22 @@ void ScriptManager::moveToUnit(int unitId,int destUnitId) {
 	if(SystemFlags::getSystemSettingType(SystemFlags::debugLUA).enabled) SystemFlags::OutputDebug(SystemFlags::debugLUA,"In [%s::%s Line: %d] unit [%d] destUnitId [%d]\n",extractFileFromDirectoryPath(__FILE__).c_str(),__FUNCTION__,__LINE__,unitId,destUnitId);
 
 	world->moveToUnit(unitId,destUnitId);
+}
+
+void ScriptManager::setFactionTeam(int factionIndex, int newTeam){
+	if(SystemFlags::getSystemSettingType(SystemFlags::debugLUA).enabled) SystemFlags::OutputDebug(SystemFlags::debugLUA,"In [%s::%s Line: %d]\n",extractFileFromDirectoryPath(__FILE__).c_str(),__FUNCTION__,__LINE__);
+
+	// Teams start at 1 in XML but start at 0 in the main codebase, so offset by 1 to
+	// prevent confusing off-by-one errors for scenario creators.
+	newTeam = newTeam - 1;
+
+	world->setFactionTeam(factionIndex, newTeam);
+}
+
+int ScriptManager::getFactionTeam(int factionIndex){
+	if(SystemFlags::getSystemSettingType(SystemFlags::debugLUA).enabled) SystemFlags::OutputDebug(SystemFlags::debugLUA,"In [%s::%s Line: %d]\n",extractFileFromDirectoryPath(__FILE__).c_str(),__FUNCTION__,__LINE__);
+
+	return world->getFactionTeam(factionIndex) + 1;
 }
 
 void ScriptManager::giveResource(const string &resourceName, int factionIndex, int amount){
@@ -2454,6 +2472,32 @@ int ScriptManager::togglePauseGame(LuaHandle* luaHandle) {
 
 	return luaArguments.getReturnCount();
 }
+
+int ScriptManager::setFactionTeam(LuaHandle* luaHandle){
+	LuaArguments luaArguments(luaHandle);
+	try {
+		thisScriptManager->setFactionTeam(luaArguments.getInt(-2), luaArguments.getInt(-1));
+	}
+	catch(const megaglest_runtime_error &ex) {
+		error(luaHandle,&ex,__FILE__,__FUNCTION__,__LINE__);
+	}
+
+	return luaArguments.getReturnCount();
+}
+
+int ScriptManager::getFactionTeam(LuaHandle* luaHandle){
+	LuaArguments luaArguments(luaHandle);
+	try {
+		int result = thisScriptManager->getFactionTeam(luaArguments.getInt(-1));
+		luaArguments.returnInt(result);
+	}
+	catch(const megaglest_runtime_error &ex) {
+		error(luaHandle,&ex,__FILE__,__FUNCTION__,__LINE__);
+	}
+
+	return luaArguments.getReturnCount();
+}
+
 int ScriptManager::giveResource(LuaHandle* luaHandle){
 	LuaArguments luaArguments(luaHandle);
 	try {

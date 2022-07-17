@@ -302,6 +302,8 @@ private:
 	void stopStreamingVideo(const string &playVideo);
 	void stopAllVideo();
 
+	void setFactionTeam(int factionIndex, int newTeam);
+	int getFactionTeam(int factionIndex);
 	void giveResource(const string &resourceName, int factionIndex, int amount);
 	void givePositionCommand(int unitId, const string &producedName, const Vec2i &pos);
 	void giveProductionCommand(int unitId, const string &producedName);
@@ -391,6 +393,7 @@ private:
 	const string getPlayerName(int factionIndex);
 
 	vector<int> getUnitsForFaction(int factionIndex,const string& commandTypeName, int field);
+	vector<int> getAllUnitsForFaction(int factionIndex);
 	int getUnitCurrentField(int unitId);
 
 	void loadScenario(const string &name, bool keepFactions);
@@ -471,6 +474,8 @@ private:
 	static int stopStreamingVideo(LuaHandle* luaHandle);
 	static int stopAllVideo(LuaHandle* luaHandle);
 
+	static int setFactionTeam(LuaHandle* luaHandle);
+	static int getFactionTeam(LuaHandle* luaHandle);
 	static int giveResource(LuaHandle* luaHandle);
 	static int givePositionCommand(LuaHandle* luaHandle);
 	static int giveProductionCommand(LuaHandle* luaHandle);

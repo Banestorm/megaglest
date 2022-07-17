@@ -246,6 +246,8 @@ public:
 	void addConsoleText(const string &text);
 	void addConsoleTextWoLang(const string &text);
 
+	void setFactionTeam(int factionIndex, int newTeam);
+	int getFactionTeam(int factionIndex);
 	void giveResource(const string &resourceName, int factionIndex, int amount);
 	int getResourceAmount(const string &resourceName, int factionIndex);
 	Vec2i getStartLocation(int factionIndex);

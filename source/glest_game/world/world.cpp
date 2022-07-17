@@ -1374,6 +1374,37 @@ void World::createUnit(const string &unitName, int factionIndex, const Vec2i &po
 	if(SystemFlags::getSystemSettingType(SystemFlags::debugUnitCommands).enabled) SystemFlags::OutputDebug(SystemFlags::debugUnitCommands,"In [%s::%s Line: %d]\n",__FILE__,__FUNCTION__,__LINE__);
 }
 
+void World::setFactionTeam(int factionIndex, int newTeam) {
+
+	if(factionIndex < 0 || factionIndex > getFactionCount()) {
+		throw megaglest_runtime_error("Invalid faction index in getAllUnitsForFaction: " + intToStr(factionIndex),true);
+	}
+
+	Faction *faction = getFaction(factionIndex);
+	int oldTeam = faction->getTeam();
+	if(oldTeam == newTeam) {
+		return;
+	}
+	faction->setTeam(newTeam);
+	GameSettings *settings = getGameSettingsPtr();
+	settings->setTeam(factionIndex,newTeam);
+	getStats()->setTeam(factionIndex, newTeam);
+
+	if(factionIndex == getThisFactionIndex()) {
+		setThisTeamIndex(newTeam);
+	}
+}
+
+int World::getFactionTeam(int factionIndex) {
+
+	if(factionIndex < 0 || factionIndex > getFactionCount()) {
+		throw megaglest_runtime_error("Invalid faction index in getAllUnitsForFaction: " + intToStr(factionIndex),true);
+	}
+
+	Faction *faction = getFaction(factionIndex);
+	return faction->getTeam();
+}
+
 void World::giveResource(const string &resourceName, int factionIndex, int amount) {
 	if(factionIndex < (int)factions.size()) {
 		Faction* faction= factions[factionIndex];
