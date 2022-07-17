@@ -1891,7 +1891,7 @@ void ProjectileParticleSystem::update(){
 			this->particleOwner->logParticleInfo(szBuf);
 		}
 
-		if(arriveDestinationDistance < 0.5f) {
+		if(arriveDestinationDistance < 0.5f || relative >= 1) {
 			fade();
 			model= NULL;
 
